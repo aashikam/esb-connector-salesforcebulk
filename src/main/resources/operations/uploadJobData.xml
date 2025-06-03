@@ -21,16 +21,13 @@
     <parameter name="inputData" description="Input Data"/>
     <parameter name="contentType" description="Content type of the job data (e.g., text/csv)"/>
     <sequence>
-        <property name="sf_bulk_inputData" expression="$func:inputData"/>
         <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
             <property name="resourcePath" expression="fn:concat('/services/data/{$version}/jobs/ingest/',$func:jobId,'/batches')"/>
         </class>
-        <payloadFactory media-type="text">
-            <format>
-                $1
-            </format>
+        <payloadFactory template-type="freemarker">
+            <format>${args.arg1}</format>
             <args>
-                <arg evaluator="xml" expression="$ctx:sf_bulk_inputData"/>
+                <arg evaluator="xml" expression="$func:inputData"/>
             </args>
         </payloadFactory>
         <property name="DISABLE_CHUNKING" scope="axis2" type="STRING" value="true"/>

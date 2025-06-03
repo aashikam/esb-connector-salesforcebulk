@@ -20,7 +20,7 @@
     <parameter name="queryJobId" description="Query Job ID"/>
     <sequence>
         <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
-            <property name="resourcePath" value="fn:concat('/services/data/{$version}/jobs/query/',$func:queryJobId)"/>
+            <property name="resourcePath" expression="fn:concat('/services/data/{$version}/jobs/query/',$func:queryJobId)"/>
         </class>
         <property name="DISABLE_CHUNKING" scope="axis2" type="STRING" value="true"/>
         <property name="messageType" value="application/json" scope="axis2"/>
@@ -35,7 +35,7 @@
         <header name="Accept" scope="transport" value="application/json" action="set"/>
         <call>
             <endpoint>
-                <http method="patch" uri-template="{uri.var.apiUrl}{+uri.var.resourcePath}"/>
+                <http method="PATCH" uri-template="{uri.var.apiUrl}{+uri.var.resourcePath}"/>
             </endpoint>
         </call>
     </sequence>

@@ -20,14 +20,14 @@
     <parameter name="queryJobId" description="Query Job ID"/>
     <sequence>
         <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
-            <property name="resourcePath" value="fn:concat('/services/data/{$version}/jobs/query/',$func:queryJobId)"/>
+            <property name="resourcePath" expression="fn:concat('/services/data/{$version}/jobs/query/',$func:queryJobId)"/>
         </class>
         <property name="DISABLE_CHUNKING" scope="axis2" type="STRING" value="true"/>
         <header name="Authorization" scope="transport" expression="fn:concat('Bearer ', get-property('_OH_INTERNAL_ACCESS_TOKEN_'))"/>
         <header name="Accept" scope="transport" value="application/json" action="set"/>
         <call>
             <endpoint>
-                <http method="get" uri-template="{uri.var.apiUrl}{+uri.var.resourcePath}"/>
+                <http method="GET" uri-template="{uri.var.apiUrl}{+uri.var.resourcePath}"/>
             </endpoint>
         </call>
     </sequence>

@@ -16,8 +16,11 @@
   ~ under the License.
   -->
 <template xmlns="http://ws.apache.org/ns/synapse" name="createQueryJob">
-    <!-- Removed parameters that are now part of the payload: query, operation, columnDelimiter, lineEnding.
-         contentType is included in payload via get-property('contentType') -->
+    <parameter name="operation" description="operation"/>
+    <parameter name="query" description="SOQL query"/>
+    <parameter name="contentType" description="contentType"/>
+    <parameter name="columnDelimiter" description="columnDelimiter"/>
+    <parameter name="lineEnding" description="lineEnding"/>
     <sequence>
         <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
             <property name="resourcePath" value="/services/data/{$version}/jobs/query"/>
@@ -26,16 +29,20 @@
         <property name="messageType" value="application/json" scope="axis2"/>
         <property name="ContentType" value="application/json" scope="axis2"/>
         <payloadFactory media-type="json" template-type="freemarker">
-            <format>
-                <![CDATA[{
-                    "operation": "{get-property('operation')}",
-                    "query": "{get-property('query')}",
-                    "contentType": "{get-property('contentType')}",
-                    "columnDelimiter": "{get-property('columnDelimiter')}",
-                    "lineEnding": "{get-property('lineEnding')}"
-                }]]>
-            </format>
-            <args/>
+            <format><![CDATA[{
+                "operation": "${args.arg1}",
+                "query": "${args.arg2}",
+                "contentType": "${args.arg3}",
+                "columnDelimiter": "${args.arg4}",
+                "lineEnding": "${args.arg5}"
+            }]]></format>
+            <args>
+                <arg evaluator="xml" expression="$func:operation"/>
+                <arg evaluator="xml" expression="$func:query"/>
+                <arg evaluator="xml" expression="$func:contentType"/>
+                <arg evaluator="xml" expression="$func:columnDelimiter"/>
+                <arg evaluator="xml" expression="$func:lineEnding"/>
+            </args>
         </payloadFactory>
         <header name="Authorization" scope="transport" expression="fn:concat('Bearer ', get-property('_OH_INTERNAL_ACCESS_TOKEN_'))"/>
         <header name="Accept" scope="transport" value="application/json" action="set"/>

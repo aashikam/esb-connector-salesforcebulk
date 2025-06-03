@@ -32,13 +32,13 @@
         <property name="ContentType" value="application/json" scope="axis2"/>
         <payloadFactory media-type="json" template-type="freemarker">
             <format><![CDATA[{
-                "object": "${args.object}",
-                "contentType": "${args.contentType}",
-                "operation": "${args.operation}",
-                "columnDelimiter": "${args.columnDelimiter}",
-                "lineEnding": "${args.lineEnding}",
-                "assignmentRuleId": "${args.assignmentRuleId}",
-                "externalIdFieldName": "${args.externalIdFieldName}"
+                "object": "${args.arg1}",
+                "contentType": "${args.arg2}",
+                "operation": "${args.arg3}",
+                "columnDelimiter": "${args.arg4}",
+                "lineEnding": "${args.arg5}",
+                "assignmentRuleId": "${args.arg6}",
+                "externalIdFieldName": "${args.arg7}"
             }]]></format>
             <args>
                 <arg evaluator="xml" expression="$func:object"/>

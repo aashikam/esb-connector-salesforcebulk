@@ -16,10 +16,13 @@
   ~ under the License.
   -->
 <template xmlns="http://ws.apache.org/ns/synapse" name="createJob">
-    <!-- apiVersion parameter is not in the original file, so it's not added here.
-         If it's required, it should be added separately.
-         The task mentioned "The only remaining parameter should be apiVersion".
-         Removed: operation, object, columnDelimiter, lineEnding, assignmentRuleId, externalIdFieldName, contentType (as it's part of payload) -->
+    <parameter name="operation" description="operation"/>
+    <parameter name="object" description="object"/>
+    <parameter name="columnDelimiter" description="columnDelimiter"/>
+    <parameter name="lineEnding" description="lineEnding"/>
+    <parameter name="assignmentRuleId" description="assignmentRuleId"/>
+    <parameter name="externalIdFieldName" description="externalIdFieldName"/>
+    <parameter name="contentType" description="contentType"/>
     <sequence>
         <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
             <property name="resourcePath" value="/services/data/{$version}/jobs/ingest"/>
@@ -28,17 +31,24 @@
         <property name="messageType" value="application/json" scope="axis2"/>
         <property name="ContentType" value="application/json" scope="axis2"/>
         <payloadFactory media-type="json" template-type="freemarker">
-            <format>
-                <![CDATA[{
-                    "columnDelimiter": "{get-property('columnDelimiter')}",
-                    "contentType": "{get-property('contentType')}",
-                    "lineEnding": "{get-property('lineEnding')}",
-                    "object": "{get-property('object')}",
-                    "operation": "{get-property('operation')}",
-                    "externalIdFieldName": "{get-property('externalIdFieldName')}"
-                }]]>
-            </format>
-            <args/>
+            <format><![CDATA[{
+                "object": "${args.object}",
+                "contentType": "${args.contentType}",
+                "operation": "${args.operation}",
+                "columnDelimiter": "${args.columnDelimiter}",
+                "lineEnding": "${args.lineEnding}",
+                "assignmentRuleId": "${args.assignmentRuleId}",
+                "externalIdFieldName": "${args.externalIdFieldName}"
+            }]]></format>
+            <args>
+                <arg evaluator="xml" expression="$func:object"/>
+                <arg evaluator="xml" expression="$func:contentType"/>
+                <arg evaluator="xml" expression="$func:operation"/>
+                <arg evaluator="xml" expression="$func:columnDelimiter"/>
+                <arg evaluator="xml" expression="$func:lineEnding"/>
+                <arg evaluator="xml" expression="$func:assignmentRuleId"/>
+                <arg evaluator="xml" expression="$func:externalIdFieldName"/>
+            </args>
         </payloadFactory>
         <header name="Authorization" scope="transport" expression="fn:concat('Bearer ', get-property('_OH_INTERNAL_ACCESS_TOKEN_'))"/>
         <header name="Accept" scope="transport" value="application/json" action="set"/>

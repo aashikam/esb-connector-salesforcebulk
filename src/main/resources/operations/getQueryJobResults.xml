@@ -20,17 +20,20 @@
     <parameter name="queryJobId" description="Query Job ID"/>
     <parameter name="locator" description="Query Locator"/>
     <parameter name="maxRecords" description="Query Job ID"/>
-    <parameter name="outputType" description="Output Type"/>
-    <parameter name="includeResultTo" description="Add Results To"/>
-    <parameter name="filePath" description="Output File Path"/>
 
     <sequence>
-        <class name="org.wso2.carbon.esb.connector.operations.GetQueryJobResult"/>
-        <property name="uri.var.url" expression="get-property('sf_bulk_getQueryJobResultsUrl')"/>
-        <salesforce_bulkapi_v2.callBulkApi>
-            <method>get</method>
-            <url>{uri.var.url}</url>
-        </salesforce_bulkapi_v2.callBulkApi>
+        <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
+            <property name="resourcePath" value="fn:concat('/services/data/{$version}/jobs/query/',$func:queryJobId,'/results')"/>
+            <property name="queryParameters" value="locator,maxRecords"/>
+        </class>
+        <property name="DISABLE_CHUNKING" scope="axis2" type="STRING" value="true"/>
+        <header name="Authorization" scope="transport" expression="fn:concat('Bearer ', get-property('_OH_INTERNAL_ACCESS_TOKEN_'))"/>
+        <header name="Accept" scope="transport" value="application/json" action="set"/>
+        <call>
+            <endpoint>
+                <http method="get" uri-template="{uri.var.apiUrl}{+uri.var.resourcePath}{uri.var.queryParameters}"/>
+            </endpoint>
+        </call>
         <filter regex="200" source="$axis2:HTTP_SC">
             <then>
                 <class name="org.wso2.carbon.esb.connector.operations.ProcessResults"/>

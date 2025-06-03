@@ -19,18 +19,24 @@
 <template xmlns="http://ws.apache.org/ns/synapse" name="abortQueryJob">
     <parameter name="queryJobId" description="Query Job ID"/>
     <sequence>
-        <class name="org.wso2.carbon.esb.connector.operations.AbortQueryJob"/>
-        <property name="uri.var.url" expression="get-property('sf_bulk_abortQueryJobUrl')"/>
-        <payloadFactory media-type="json">
+        <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
+            <property name="resourcePath" value="fn:concat('/services/data/{$version}/jobs/query/',$func:queryJobId)"/>
+        </class>
+        <property name="DISABLE_CHUNKING" scope="axis2" type="STRING" value="true"/>
+        <property name="messageType" value="application/json" scope="axis2"/>
+        <property name="ContentType" value="application/json" scope="axis2"/>
+        <payloadFactory media-type="json" template-type="freemarker">
             <format>
                 <![CDATA[{ "state" : "Aborted" }]]>
             </format>
             <args/>
         </payloadFactory>
-        <salesforce_bulkapi_v2.callBulkApi>
-            <method>patch</method>
-            <url>{uri.var.url}</url>
-            <contentType>application/json</contentType>
-        </salesforce_bulkapi_v2.callBulkApi>
+        <header name="Authorization" scope="transport" expression="fn:concat('Bearer ', get-property('_OH_INTERNAL_ACCESS_TOKEN_'))"/>
+        <header name="Accept" scope="transport" value="application/json" action="set"/>
+        <call>
+            <endpoint>
+                <http method="patch" uri-template="{uri.var.apiUrl}{+uri.var.resourcePath}"/>
+            </endpoint>
+        </call>
     </sequence>
 </template>

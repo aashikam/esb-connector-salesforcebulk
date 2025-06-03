@@ -21,11 +21,17 @@
     <parameter name="jobType" description="Job Type"/>
     <parameter name="queryLocator" description="Query Locator"/>
     <sequence>
-        <class name="org.wso2.carbon.esb.connector.operations.GetAllQueryJobInfo"/>
-        <property name="uri.var.url" expression="get-property('sf_bulk_allQueryJobInfoUrl')"/>
-        <salesforce_bulkapi_v2.callBulkApi>
-            <method>get</method>
-            <url>{uri.var.url}</url>
-        </salesforce_bulkapi_v2.callBulkApi>
+        <class name="org.wso2.carbon.salesforce.connector.RestURLBuilder">
+            <property name="resourcePath" value="/services/data/{$version}/jobs/query"/>
+            <property name="queryParameters" value="isPkChunkingEnabled,jobType,queryLocator"/>
+        </class>
+        <property name="DISABLE_CHUNKING" scope="axis2" type="STRING" value="true"/>
+        <header name="Authorization" scope="transport" expression="fn:concat('Bearer ', get-property('_OH_INTERNAL_ACCESS_TOKEN_'))"/>
+        <header name="Accept" scope="transport" value="application/json" action="set"/>
+        <call>
+            <endpoint>
+                <http method="get" uri-template="{uri.var.apiUrl}{+uri.var.resourcePath}{uri.var.queryParameters}"/>
+            </endpoint>
+        </call>
     </sequence>
 </template>

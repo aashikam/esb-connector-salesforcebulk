@@ -32,8 +32,6 @@ import org.apache.synapse.MessageContext;
 import org.apache.synapse.commons.json.JsonUtil; // Added
 import org.wso2.carbon.connector.core.AbstractConnector;
 import org.wso2.carbon.connector.core.util.ConnectorUtils;
-import org.wso2.carbon.esb.connector.exception.InvalidConfigurationException; // Added
-import org.wso2.carbon.esb.connector.exception.ResponseParsingException; // Added
 
 import au.com.bytecode.opencsv.CSVReader; // Added
 import com.google.gson.Gson; // Added
@@ -176,13 +174,7 @@ public class ProcessResults extends AbstractConnector {
         String jsonString = "{\"error\":\"" + StringEscapeUtils.escapeJava(e.getMessage()) + "\"}";
         try {
             JsonUtil.getNewJsonPayload(axisCtx, jsonString, true, true);
-            if (e instanceof InvalidConfigurationException) {
-                axisCtx.setProperty(HTTP_SC_PROPERTY, HTTP_BAD_REQUEST);
-            } else if (e instanceof ResponseParsingException) {
-                axisCtx.setProperty(HTTP_SC_PROPERTY, HTTP_INTERNAL_SERVER_ERROR);
-            } else {
-                axisCtx.setProperty(HTTP_SC_PROPERTY, HTTP_INTERNAL_SERVER_ERROR);
-            }
+            axisCtx.setProperty(HTTP_SC_PROPERTY, HTTP_INTERNAL_SERVER_ERROR);
         } catch (AxisFault ex) {
             log.error("Error while generating error output", ex);
             axisCtx.setProperty(HTTP_SC_PROPERTY, HTTP_INTERNAL_SERVER_ERROR);
